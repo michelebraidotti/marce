@@ -3,6 +3,7 @@ package marce;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -10,12 +11,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import marce.domain.Marcia;
 import marce.domain.ParsingException;
 import marce.logic.MarceFile;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Hello world!
@@ -24,6 +27,7 @@ import java.io.IOException;
 public class MarceApp extends Application {
 
     private Stage stage;
+    private TableView table = new TableView();
 
     public static void main( String[] args ) {
         launch(args);
@@ -41,7 +45,6 @@ public class MarceApp extends Application {
 
         // menu bar
         MenuBar menuBar = new MenuBar();
-
         Menu menuFile = new Menu("File");
 
         MenuItem newItem = new MenuItem("Nuovo");
@@ -56,12 +59,11 @@ public class MarceApp extends Application {
         menuFile.getItems().addAll(newItem, openItem, saveItem);
 
         Menu menuHelp = new Menu("Aiuto");
-
         menuBar.getMenus().addAll(menuFile, menuHelp);
 
         root.add(menuBar, 0, 0);
 
-        //buttonbar
+        //button bar
         ToolBar toolBar = new ToolBar();
         Button buttonNew = new Button("Nuovo", new ImageView(new Image("icons/document_32.png")));
         buttonNew.setContentDisplay(ContentDisplay.TOP);
@@ -83,6 +85,24 @@ public class MarceApp extends Application {
         toolBar.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch);
         root.add(toolBar, 0, 1);
 
+        // main table
+
+        table.setEditable(true);
+
+        TableColumn firstNameCol = new TableColumn("First Name");
+        TableColumn lastNameCol = new TableColumn("Last Name");
+        TableColumn emailCol = new TableColumn("Email");
+
+        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+        vbox.getChildren().addAll(table);
+
+        root.add(vbox, 0, 2);
+
+        // main window
         primaryStage.setTitle("Gestione MarceApp");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -108,7 +128,8 @@ public class MarceApp extends Application {
             File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 try {
-                    MarceFile.loadFromFile(file.getAbsolutePath ());
+                    List<Marcia> marce = MarceFile.loadFromFile(file.getAbsolutePath ());
+                    System.out.println("Loaded " + marce.size() + " marce");
                 } catch (IOException e) {
                     showError(e);
                 } catch (ParsingException e) {
