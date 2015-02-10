@@ -1,0 +1,103 @@
+package marce.domain;
+
+import java.math.BigDecimal;
+
+public class Marcia {
+//   public static Object[] HEADER = {"Progressivo", "Data", "Giorni", "Edizione", "Denominazione",
+//	"Localita'", "Zona", "Km", "Tempo"};
+    private int id = 0;
+    private DataDelCalendario dataInizio;
+    private DataDelCalendario dataFine;
+    private String nomeEvento;
+    private int edizione = 0;
+    private Posto posto;
+    private BigDecimal km = new BigDecimal("0.000");
+    private Tempo tempo = new Tempo(0);
+
+    public int getId() {
+	return id;
+    }
+
+    public void setId(int id) {
+	this.id = id;
+    }
+
+    public DataDelCalendario getDataFine() {
+	return dataFine;
+    }
+
+    public void setDataFine(DataDelCalendario dataFine) {
+	this.dataFine = dataFine;
+    }
+
+    public DataDelCalendario getDataInizio() {
+	return dataInizio;
+    }
+
+    public void setDataInizio(DataDelCalendario dataInizio) {
+	this.dataInizio = dataInizio;
+    }
+
+    public int getEdizione() {
+	return edizione;
+    }
+
+    public void setEdizione(int edizione) {
+	this.edizione = edizione;
+    }
+
+    public Posto getPosto() {
+	return posto;
+    }
+
+    public void setPosto(Posto posto) {
+	this.posto = posto;
+    }
+
+    public BigDecimal getKm() {
+	return km;
+    }
+
+    public void setKm(BigDecimal km) {
+	this.km = km;
+    }
+
+    public String getNomeEvento() {
+	return nomeEvento;
+    }
+
+    public void setNomeEvento(String nomeEvento) {
+	this.nomeEvento = nomeEvento;
+    }
+
+    public Tempo getTempo() {
+	return tempo;
+    }
+
+    public void setTempo(Tempo tempo) {
+	this.tempo = tempo;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final Marcia other = (Marcia) obj;
+	if (this.id != other.id) {
+	    return false;
+	}
+	return true;
+    }
+
+    @Override
+    public int hashCode() {
+	int hash = 3;
+	hash = 97 * hash + this.id;
+	return hash;
+    }
+    
+}
