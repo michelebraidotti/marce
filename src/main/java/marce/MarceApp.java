@@ -10,7 +10,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
 import marce.logic.MarceFile;
@@ -28,14 +30,29 @@ public class MarceApp extends Application {
 
     private Stage stage;
     private TableView table = new TableView();
+    private Stage newMarciaStage = null;
 
     public static void main( String[] args ) {
         launch(args);
     }
 
+    private void initNewMarciaStage() {
+        newMarciaStage = new Stage();
+        newMarciaStage.initModality(Modality.WINDOW_MODAL);
+        newMarciaStage.initOwner(stage);
+        StackPane root = new StackPane();
+        Label label = new Label("Hello World!");
+        root.getChildren().add(label);
+        Scene scene = new Scene(root, 800, 600);
+        newMarciaStage.setTitle("Hello");
+        newMarciaStage.setScene(scene);
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
+        initNewMarciaStage();
+
         GridPane root = new GridPane();
         ColumnConstraints column = new ColumnConstraints();
         column.setPercentWidth(100);
@@ -113,7 +130,7 @@ public class MarceApp extends Application {
 
         @Override
         public void handle(ActionEvent event) {
-
+            newMarciaStage.show();
         }
     }
 
