@@ -4,18 +4,22 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
 import marce.logic.MarceFile;
+import marce.view.MarciaEditorStage;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
@@ -29,29 +33,18 @@ import java.util.List;
 public class MarceApp extends Application {
 
     private Stage stage;
-    private TableView table = new TableView();
+    private TableView table = null;
     private Stage newMarciaStage = null;
 
     public static void main( String[] args ) {
         launch(args);
     }
 
-    private void initNewMarciaStage() {
-        newMarciaStage = new Stage();
-        newMarciaStage.initModality(Modality.WINDOW_MODAL);
-        newMarciaStage.initOwner(stage);
-        StackPane root = new StackPane();
-        Label label = new Label("Hello World!");
-        root.getChildren().add(label);
-        Scene scene = new Scene(root, 800, 600);
-        newMarciaStage.setTitle("Hello");
-        newMarciaStage.setScene(scene);
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
-        initNewMarciaStage();
+        this.newMarciaStage = new MarciaEditorStage(primaryStage, null);
 
         GridPane root = new GridPane();
         ColumnConstraints column = new ColumnConstraints();
@@ -61,26 +54,35 @@ public class MarceApp extends Application {
         Scene scene = new Scene(root, 1200, 800);
 
         // menu bar
-        MenuBar menuBar = new MenuBar();
-        Menu menuFile = new Menu("File");
-
-        MenuItem newItem = new MenuItem("Nuovo");
-        newItem.setOnAction(new NewAction());
-
-        MenuItem openItem = new MenuItem("Apri");
-        openItem.setOnAction(new OpenAction());
-
-        MenuItem saveItem = new MenuItem("Salva");
-        saveItem.setOnAction(new SaveAction());
-
-        menuFile.getItems().addAll(newItem, openItem, saveItem);
-
-        Menu menuHelp = new Menu("Aiuto");
-        menuBar.getMenus().addAll(menuFile, menuHelp);
-
-        root.add(menuBar, 0, 0);
+        root.add(buildMenuBar(), 0, 0);
 
         //button bar
+        root.add(buildToolBar(), 0, 1);
+
+        // main table
+        table = new TableView();
+        table.setEditable(true);
+
+        TableColumn firstNameCol = new TableColumn("First Name");
+        TableColumn lastNameCol = new TableColumn("Last Name");
+        TableColumn emailCol = new TableColumn("Email");
+
+        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+        vbox.getChildren().addAll(table);
+        root.add(vbox, 0, 2);
+
+        // main window
+        primaryStage.setTitle("Gestione MarceApp");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+    }
+
+    private ToolBar buildToolBar() {
         ToolBar toolBar = new ToolBar();
         Button buttonNew = new Button("Nuovo", new ImageView(new Image("icons/document_32.png")));
         buttonNew.setContentDisplay(ContentDisplay.TOP);
@@ -100,30 +102,27 @@ public class MarceApp extends Application {
         buttonSearch.setContentDisplay(ContentDisplay.TOP);
 
         toolBar.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch);
-        root.add(toolBar, 0, 1);
+        return toolBar;
+    }
 
-        // main table
+    private MenuBar buildMenuBar() {
+        MenuBar menuBar = new MenuBar();
+        Menu menuFile = new Menu("File");
 
-        table.setEditable(true);
+        MenuItem newItem = new MenuItem("Nuovo");
+        newItem.setOnAction(new NewAction());
 
-        TableColumn firstNameCol = new TableColumn("First Name");
-        TableColumn lastNameCol = new TableColumn("Last Name");
-        TableColumn emailCol = new TableColumn("Email");
+        MenuItem openItem = new MenuItem("Apri");
+        openItem.setOnAction(new OpenAction());
 
-        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+        MenuItem saveItem = new MenuItem("Salva");
+        saveItem.setOnAction(new SaveAction());
 
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 10, 10, 10));
-        vbox.getChildren().addAll(table);
+        menuFile.getItems().addAll(newItem, openItem, saveItem);
 
-        root.add(vbox, 0, 2);
-
-        // main window
-        primaryStage.setTitle("Gestione MarceApp");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
+        Menu menuHelp = new Menu("Aiuto");
+        menuBar.getMenus().addAll(menuFile, menuHelp);
+        return menuBar;
     }
 
     private class NewAction implements EventHandler<ActionEvent> {
