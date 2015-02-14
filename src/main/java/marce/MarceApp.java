@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
 import marce.logic.MarceFile;
+import marce.logic.MarceManager;
 import marce.view.MarciaEditorStage;
 import org.controlsfx.dialog.Dialogs;
 
@@ -35,11 +36,11 @@ public class MarceApp extends Application {
     private Stage stage;
     private TableView table = null;
     private Stage newMarciaStage = null;
+    private MarceManager marceManager = new MarceManager();
 
     public static void main( String[] args ) {
         launch(args);
     }
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -129,7 +130,9 @@ public class MarceApp extends Application {
 
         @Override
         public void handle(ActionEvent event) {
+            Marcia marcia = marceManager.getNew();
             newMarciaStage.show();
+
         }
     }
 
@@ -145,7 +148,7 @@ public class MarceApp extends Application {
             if (file != null) {
                 try {
                     List<Marcia> marce = MarceFile.loadFromFile(file.getAbsolutePath ());
-                    System.out.println("Loaded " + marce.size() + " marce");
+                    marceManager.setMarce(marce);
                 } catch (IOException e) {
                     showError(e);
                 } catch (ParsingException e) {

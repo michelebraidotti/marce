@@ -1,6 +1,7 @@
 package marce.logic;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,18 +54,18 @@ public class MarceManager {
     }
 
     private int getNextId() {
-	if ( marce.isEmpty() ) {
-	    return 1;
-	}
-	else {
-	    int max = 0;
-	    for (Marcia marcia:marce) {
-		if ( marcia.getId() > max ) {
-		    max = marcia.getId();
-		}
-	    }
-	    return max + 1;
-	}
+        if ( marce.isEmpty() ) {
+            return 1;
+        }
+        else {
+            int max = 0;
+            for (Marcia marcia:marce) {
+                if ( marcia.getId() > max ) {
+                    max = marcia.getId();
+                }
+            }
+            return max + 1;
+        }
     }
     
     public int size() {
@@ -92,13 +93,13 @@ public class MarceManager {
     
     public Set<String> getDenominazioniList() {
         List<String> denominazioni = new ArrayList<>();
-	for (Marcia marcia:marce) { 
-            if ( marcia.getNomeEvento() != null )
-                denominazioni.add(marcia.getNomeEvento());
-	}
+        for (Marcia marcia:marce) {
+                if ( marcia.getNomeEvento() != null )
+                    denominazioni.add(marcia.getNomeEvento());
+        }
         // Arrays.sort(denominazioni);
         Set<String> denominazioniSet = new TreeSet<>(denominazioni);
-	return denominazioniSet;
+        return denominazioniSet;
     }
     
     public String[] getDenominazioniListAsArray() {
@@ -114,12 +115,12 @@ public class MarceManager {
     
     public Set<Posto> getPostiList() {
         List<Posto> posti = new ArrayList<>();
-	for (Marcia marcia:marce) {
-            if ( marcia.getPosto() != null)
-                posti.add(marcia.getPosto());
-	}
+        for (Marcia marcia:marce) {
+                if ( marcia.getPosto() != null)
+                    posti.add(marcia.getPosto());
+        }
         Set<Posto> postiSet = new TreeSet<>(posti);
-	return postiSet;
+        return postiSet;
     }
     
     public Posto[] getPostiListAsArray() {
@@ -133,33 +134,31 @@ public class MarceManager {
     }
 
     public BigDecimal totaleKm() {
-	BigDecimal totale = new BigDecimal("0.00");
-	for (Marcia marcia:marce) {
-	    totale = totale.add(marcia.getKm());
-	}
-	return totale;
+        BigDecimal totale = new BigDecimal("0.00");
+        for (Marcia marcia:marce) {
+            totale = totale.add(marcia.getKm());
+        }
+        return totale;
     }
 
     public Tempo totaleTempo() throws ParsingException {
-	Tempo totale = new Tempo(0);
-	for (Marcia marcia:marce) {
-	    totale = totale.add(marcia.getTempo());
-	}
-	return totale;
+        Tempo totale = new Tempo(0);
+        for (Marcia marcia:marce) {
+            totale = totale.add(marcia.getTempo());
+        }
+        return totale;
     }
 
     public List<Marcia> getPerAnno(int year) {
         List<Marcia> out = new ArrayList<>();
-	Calendar start = Calendar.getInstance();
-	start.set(year, 1, 1);
-	Calendar end = Calendar.getInstance();
-	end.set(year, 12, 31);
+        LocalDate start = LocalDate.of(year, 1, 1);
+        LocalDate end = LocalDate.of(year, 12, 31);
     	for (Marcia marcia:marce) {
-	    Calendar dataInizio = marcia.getDataInizio().getCal();
-	    if ( !(dataInizio.before(start) || dataInizio.after(end)) ) {
-		out.add(marcia);
-	    }
-	}
+            LocalDate dataInizio = marcia.getDataInizio().getLocalDate();
+            if ( !(dataInizio.isBefore(start) || dataInizio.isAfter(end)) ) {
+                out.add(marcia);
+            }
+        }
         return out;
     }
 
