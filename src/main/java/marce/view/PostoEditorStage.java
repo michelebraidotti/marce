@@ -14,11 +14,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import marce.domain.Posto;
 
 /**
  * Created by michele on 2/15/15.
  */
 public class PostoEditorStage extends Stage {
+
+    private final TextField localita;
+    private final TextField zona;
 
     public  PostoEditorStage(Stage primaryStage) {
         this.initModality(Modality.WINDOW_MODAL);
@@ -36,15 +40,15 @@ public class PostoEditorStage extends Stage {
         grid.add(sceneTitle, 0, rowNumber, 2, 1);
 
         rowNumber++;
-        Text  postoLabel = new Text("Posto:");
-        grid.add(postoLabel, 0, rowNumber);
-        TextField posto = new TextField();
-        grid.add(posto, 1, rowNumber);
+        Text  localitaLabel = new Text("Posto:");
+        grid.add(localitaLabel, 0, rowNumber);
+        localita = new TextField();
+        grid.add(localita, 1, rowNumber);
 
         rowNumber++;
-        Text zonaLabel = new Text();
+        Text zonaLabel = new Text("Zona:");
         grid.add(zonaLabel, 0, rowNumber);
-        TextField zona = new TextField();
+        zona = new TextField();
         grid.add(zona, 1, rowNumber);
 
         rowNumber++;
@@ -84,5 +88,17 @@ public class PostoEditorStage extends Stage {
         Scene scene = new Scene(grid, 300, 200);
         this.setTitle("Posto");
         this.setScene(scene);
+    }
+
+    public Posto getLocalita() {
+        Posto posto = new Posto();
+        posto.setLocalita(localita.getText());
+        posto.setZona(zona.getText());
+        return  posto;
+    }
+
+    public void setPosto(Posto posto) {
+        localita.setText(posto.getLocalita());
+        zona.setText(posto.getZona());
     }
 }

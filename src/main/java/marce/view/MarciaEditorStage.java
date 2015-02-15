@@ -105,15 +105,15 @@ public class MarciaEditorStage extends Stage {
                         "Option 3"
                 );
         postoComboBox = new ComboBox(optionsPosto);
-        postoComboBox.setOnAction(new EventHandler<ActionEvent>() {
+        grid.add(postoComboBox, 1, rowNumber);
+        Button postoButton = new Button("Aggiungi posto");
+        postoButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
                 postoEditorStage.show();
             }
         });
-        grid.add(postoComboBox, 1, rowNumber);
-        Button postoButton = new Button("Aggiungi posto");
         grid.add(postoButton, 2, rowNumber);
 
         rowNumber++;
