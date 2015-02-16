@@ -21,6 +21,9 @@ import marce.domain.*;
 import javax.swing.text.LabelView;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by michele on 2/12/15.
@@ -40,10 +43,10 @@ public class MarciaEditorStage extends Stage {
 
     private Marcia marcia;
 
-    public MarciaEditorStage(Stage primaryStage, Marcia marcia) {
+    public MarciaEditorStage(MarcePrimaryStage primaryStage, Marcia marcia, Set<String> denominazioni, Set<Posto> posti) {
         this.initModality(Modality.WINDOW_MODAL);
         this.initOwner(primaryStage);
-        postoEditorStage = new PostoEditorStage(primaryStage);
+        postoEditorStage = new PostoEditorStage(this);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -66,13 +69,7 @@ public class MarciaEditorStage extends Stage {
         rowNumber++;
         Label nomeMarciaLabel = new Label("Evento:");
         grid.add(nomeMarciaLabel, 0, rowNumber);
-
-        ObservableList<String> options =
-                FXCollections.observableArrayList(
-                        "Option 1",
-                        "Option 2",
-                        "Option 3"
-                );
+        ObservableList<String> options = FXCollections.observableList(new ArrayList(denominazioni));
         nomeMarciaComboBox = new ComboBox(options);
         nomeMarciaComboBox.setEditable(true);
         grid.add(nomeMarciaComboBox, 1, rowNumber);
@@ -98,12 +95,7 @@ public class MarciaEditorStage extends Stage {
         rowNumber++;
         Label postoLabel = new Label("Posto:");
         grid.add(postoLabel, 0, rowNumber);
-        ObservableList<String> optionsPosto =
-                FXCollections.observableArrayList(
-                        "Option 1",
-                        "Option 2",
-                        "Option 3"
-                );
+        ObservableList<Posto> optionsPosto = FXCollections.observableList(new ArrayList(posti));
         postoComboBox = new ComboBox(optionsPosto);
         grid.add(postoComboBox, 1, rowNumber);
         Button postoButton = new Button("Aggiungi posto");
@@ -213,5 +205,10 @@ public class MarciaEditorStage extends Stage {
 
     public void setMarcia(Marcia marcia) {
         this.marcia = marcia;
+    }
+
+    public void onNewPostoEvent(Posto posto) {
+        postoComboBox.getItems().add(posto);
+        postoComboBox.setValue(posto);
     }
 }

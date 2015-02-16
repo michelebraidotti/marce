@@ -13,19 +13,19 @@ public class Posto implements Comparable {
     }
 
     public Posto(String definizione) throws ParsingException {
-	String[] localitaAndZona = definizione.split(SEPARATOR);
-	if (localitaAndZona.length != 2)  {
-	    throw new ParsingException("Impossibile dedurre "
-		+ "localita e zona dalla sguente definizione: " + definizione);
+        String[] localitaAndZona = definizione.split(SEPARATOR);
+        if (localitaAndZona.length != 2)  {
+            throw new ParsingException("Impossibile dedurre "
+            + "localita e zona dalla sguente definizione: " + definizione);
 
-	}
-	this.localita = localitaAndZona[0];
-	this.zona = localitaAndZona[1];
+        }
+        this.localita = localitaAndZona[0];
+        this.zona = localitaAndZona[1];
     }
 
     public Posto(String localita, String zona) {
-	this.localita = localita;
-	this.zona = zona;
+        this.localita = localita;
+        this.zona = zona;
     }
 
     public String getLocalita() {
@@ -51,30 +51,29 @@ public class Posto implements Comparable {
 
     @Override
     public boolean equals(Object other) {
-	if (this == other) {
-	    return true;
-	}
-	if (!(other instanceof Posto)) {
-	    return false;
-	}
-	Posto castOther = (Posto) other;
-	return this.localita.equals(castOther.localita)
-		&& this.zona.equals(castOther.zona);
-
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Posto)) {
+            return false;
+        }
+        Posto castOther = (Posto) other;
+        return this.localita.equals(castOther.localita)
+            && this.zona.equals(castOther.zona);
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 43 * hash + (this.localita != null ? this.localita.hashCode() : 0);
-	hash = 43 * hash + (this.zona != null ? this.zona.hashCode() : 0);
-	return hash;
+        int hash = 7;
+        hash = 43 * hash + (this.localita != null ? this.localita.hashCode() : 0);
+        hash = 43 * hash + (this.zona != null ? this.zona.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public int compareTo(Object o) {
         if ( o == null ) return -1;
-	return this.toString().compareTo(o.toString());
+        return this.toString().compareTo(o.toString());
     }
 
 

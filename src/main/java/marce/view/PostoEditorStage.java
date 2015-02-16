@@ -24,7 +24,7 @@ public class PostoEditorStage extends Stage {
     private final TextField localita;
     private final TextField zona;
 
-    public  PostoEditorStage(Stage primaryStage) {
+    public  PostoEditorStage(MarciaEditorStage primaryStage) {
         this.initModality(Modality.WINDOW_MODAL);
         this.initOwner(primaryStage);
 
@@ -66,7 +66,7 @@ public class PostoEditorStage extends Stage {
 
             @Override
             public void handle(ActionEvent e) {
-                System.out.println("Hello world!");
+                primaryStage.onNewPostoEvent(getPosto());
             }
         });
         buttonsGrid.add(hbNewBtn, 0, 1);
@@ -90,7 +90,7 @@ public class PostoEditorStage extends Stage {
         this.setScene(scene);
     }
 
-    public Posto getLocalita() {
+    public Posto getPosto() {
         Posto posto = new Posto();
         posto.setLocalita(localita.getText());
         posto.setZona(zona.getText());
