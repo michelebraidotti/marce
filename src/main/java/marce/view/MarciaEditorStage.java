@@ -43,10 +43,16 @@ public class MarciaEditorStage extends Stage {
 
     private Marcia marcia;
 
-    public MarciaEditorStage(MarcePrimaryStage primaryStage, Marcia marcia, Set<String> denominazioni, Set<Posto> posti) {
+    public MarciaEditorStage(MarcePrimaryStage primaryStage, Marcia existingMarcia, Set<String> denominazioni, Set<Posto> posti) {
         this.initModality(Modality.WINDOW_MODAL);
         this.initOwner(primaryStage);
         postoEditorStage = new PostoEditorStage(this);
+        if (existingMarcia == null) {
+            this.marcia = new Marcia();
+        }
+        else {
+            this.marcia = existingMarcia;
+        }
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -163,7 +169,16 @@ public class MarciaEditorStage extends Stage {
 
             @Override
             public void handle(ActionEvent e) {
+
                 System.out.println("Hello world!");
+                marcia = getMarcia();
+                if (marcia.getId() == 0) {
+                    primaryStage.onMarciaCreated(marcia);
+                }
+                else {
+                    primaryStage.onMarciaUpdated(marcia);
+                }
+
             }
         });
         buttonsGrid.add(hbNewBtn, 0, 1);

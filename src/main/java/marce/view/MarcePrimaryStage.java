@@ -1,10 +1,13 @@
 package marce.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -14,13 +17,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
+import marce.logic.InvalidIdException;
 import marce.logic.MarceFile;
 import marce.logic.MarceManager;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by michele on 2/16/15.
@@ -29,7 +35,7 @@ public class MarcePrimaryStage extends Stage {
     private TableView table = null;
     private MarciaEditorStage newMarciaStage = null;
     private MarceManager marceManager = new MarceManager();
-
+    private ObservableList<Marcia> marceList;
 
     public MarcePrimaryStage() {
         this.newMarciaStage = new MarciaEditorStage(this, null, marceManager.getDenominazioniList(), marceManager.getPostiList());
@@ -51,11 +57,33 @@ public class MarcePrimaryStage extends Stage {
         table = new TableView();
         table.setEditable(true);
 
-        TableColumn firstNameCol = new TableColumn("First Name");
-        TableColumn lastNameCol = new TableColumn("Last Name");
-        TableColumn emailCol = new TableColumn("Email");
+        TableColumn progressivoCol = new TableColumn("Progressivo");
+        progressivoCol.setCellFactory(new PropertyValueFactory<>("id"));
 
-        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+        TableColumn eventoCol = new TableColumn("Evento");
+        eventoCol.setCellFactory(new PropertyValueFactory<>("nomeEvento"));
+
+        TableColumn edizioneCol = new TableColumn("Edizione");
+        edizioneCol.setCellFactory(new PropertyValueFactory<>("edizione"));
+
+        TableColumn dataInizioCol = new TableColumn("Data Inizio");
+        dataInizioCol.setCellFactory(new PropertyValueFactory<>("dataInizio"));
+
+        TableColumn dataFineCol = new TableColumn("Data Fine");
+        dataFineCol.setCellFactory(new PropertyValueFactory<>("dataFine"));
+
+        TableColumn postoCol = new TableColumn("Posto");
+        postoCol.setCellFactory(new PropertyValueFactory<>("posto"));
+
+        TableColumn distanzaCol = new TableColumn("Distanza");
+        distanzaCol.setCellFactory(new PropertyValueFactory<>("km"));
+
+        TableColumn tempoCol = new TableColumn("Tempo");
+        tempoCol.setCellFactory(new PropertyValueFactory<>("tempo"));
+
+        table.getColumns().addAll(progressivoCol, eventoCol, edizioneCol, dataInizioCol, dataFineCol, postoCol, distanzaCol, tempoCol);
+        marceList = FXCollections.observableArrayList();
+        table.setItems(marceList);
 
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
@@ -63,16 +91,22 @@ public class MarcePrimaryStage extends Stage {
         vbox.getChildren().addAll(table);
         root.add(vbox, 0, 2);
 
-        setTitle("Gestione MarceApp");
+        setTitle("Gestione Marce");
         setScene(scene);
     }
 
     public void onMarciaCreated(Marcia marcia) {
-
+        try {
+            marceManager.add(marcia);
+        } catch (InvalidIdException e) {
+            showError(e);
+        }
+        marceList.add(marcia);
     }
 
     public void onMarciaUpdated(Marcia marcia) {
-
+        // find old marcia into model and replace it
+        // refresh view
     }
 
     private ToolBar buildToolBar() {
@@ -138,14 +172,16 @@ public class MarcePrimaryStage extends Stage {
             );
             File file = fileChooser.showOpenDialog(MarcePrimaryStage.this);
             if (file != null) {
+                List<Marcia> marce = new ArrayList<Marcia>();
                 try {
-                    List<Marcia> marce = MarceFile.loadFromFile(file.getAbsolutePath());
-                    marceManager.setMarce(marce);
+                    marce = MarceFile.loadFromFile(file.getAbsolutePath());
                 } catch (IOException e) {
                     showError(e);
                 } catch (ParsingException e) {
                     showError(e);
                 }
+                marceManager.setMarce(marce);
+                marceList.addAll(marce);
             }
         }
     }

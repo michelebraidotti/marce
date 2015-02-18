@@ -58,7 +58,7 @@ public class PostoEditorStage extends Stage {
         buttonsGrid.setVgap(10);
         buttonsGrid.setPadding(new Insets(25, 25, 25, 25));
 
-        Button newBtn = new Button("Salva");
+        Button newBtn = new Button("Aggiungi");
         HBox hbNewBtn = new HBox(10);
         hbNewBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbNewBtn.getChildren().add(newBtn);
@@ -66,7 +66,11 @@ public class PostoEditorStage extends Stage {
 
             @Override
             public void handle(ActionEvent e) {
+
                 primaryStage.onNewPostoEvent(getPosto());
+                localita.setText("");
+                zona.setPromptText("");
+                close();
             }
         });
         buttonsGrid.add(hbNewBtn, 0, 1);
