@@ -15,8 +15,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import marce.domain.DataDelCalendario;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
+import marce.domain.Tempo;
 import marce.logic.InvalidIdException;
 import marce.logic.MarceFile;
 import marce.logic.MarceManager;
@@ -24,9 +26,9 @@ import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 /**
  * Created by michele on 2/16/15.
@@ -58,28 +60,36 @@ public class MarcePrimaryStage extends Stage {
         table.setEditable(true);
 
         TableColumn progressivoCol = new TableColumn("Progressivo");
-        progressivoCol.setCellFactory(new PropertyValueFactory<>("id"));
+        progressivoCol.setMinWidth(100);
+        progressivoCol.setCellValueFactory(new PropertyValueFactory("id"));
 
         TableColumn eventoCol = new TableColumn("Evento");
-        eventoCol.setCellFactory(new PropertyValueFactory<>("nomeEvento"));
+        eventoCol.setMinWidth(350);
+        eventoCol.setCellValueFactory(new PropertyValueFactory<>("nomeEvento"));
 
         TableColumn edizioneCol = new TableColumn("Edizione");
-        edizioneCol.setCellFactory(new PropertyValueFactory<>("edizione"));
+        edizioneCol.setMinWidth(100);
+        edizioneCol.setCellValueFactory(new PropertyValueFactory<>("edizione"));
 
         TableColumn dataInizioCol = new TableColumn("Data Inizio");
-        dataInizioCol.setCellFactory(new PropertyValueFactory<>("dataInizio"));
+        dataInizioCol.setMinWidth(100);
+        dataInizioCol.setCellValueFactory(new PropertyValueFactory<>("dataInizio"));
 
         TableColumn dataFineCol = new TableColumn("Data Fine");
-        dataFineCol.setCellFactory(new PropertyValueFactory<>("dataFine"));
+        dataFineCol.setMinWidth(100);
+        dataFineCol.setCellValueFactory(new PropertyValueFactory<>("dataFine"));
 
         TableColumn postoCol = new TableColumn("Posto");
-        postoCol.setCellFactory(new PropertyValueFactory<>("posto"));
+        postoCol.setMinWidth(200);
+        postoCol.setCellValueFactory(new PropertyValueFactory<>("posto"));
 
         TableColumn distanzaCol = new TableColumn("Distanza");
-        distanzaCol.setCellFactory(new PropertyValueFactory<>("km"));
+        distanzaCol.setMinWidth(100);
+        distanzaCol.setCellValueFactory(new PropertyValueFactory<>("km"));
 
         TableColumn tempoCol = new TableColumn("Tempo");
-        tempoCol.setCellFactory(new PropertyValueFactory<>("tempo"));
+        tempoCol.setMinWidth(100);
+        tempoCol.setCellValueFactory(new PropertyValueFactory<>("tempo"));
 
         table.getColumns().addAll(progressivoCol, eventoCol, edizioneCol, dataInizioCol, dataFineCol, postoCol, distanzaCol, tempoCol);
         marceList = FXCollections.observableArrayList();
@@ -166,7 +176,7 @@ public class MarcePrimaryStage extends Stage {
         @Override
         public void handle(ActionEvent event) {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("View Pictures");
+            fileChooser.setTitle("Apri marce");
             fileChooser.setInitialDirectory(
                     new File(System.getProperty("user.home"))
             );

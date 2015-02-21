@@ -1,6 +1,5 @@
 package marce.view;
 
-import com.sun.corba.se.impl.orb.ParserTable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,11 +17,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import marce.domain.*;
 
-import javax.swing.text.LabelView;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**

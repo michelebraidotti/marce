@@ -5,9 +5,7 @@
 
 package marce.domain;
 
-import java.text.DateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
 
 /**
  *
@@ -28,28 +26,25 @@ public class DataDelCalendario implements Comparable {
         return localDate;
     }
 
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
-    }
-
     public DataDelCalendario(String data) throws ParsingException {
         String[] parts = data.split("-");
         if ( parts.length != 3 ) {
             throw new ParsingException("Errore nel convertire la data inizio: " + data);
         }
         int year = Integer.parseInt(parts[0]);
-        int month = Integer.parseInt(parts[1]);
+        int month = Integer.parseInt(parts[1]) + 1;
         int day = Integer.parseInt(parts[2]);
         localDate = LocalDate.of(year, month, day);
     }
 
     public String exportString() {
-	    return localDate.getYear() + "-" + localDate.getMonthValue() + "-" + localDate.getDayOfMonth();
+        int month = localDate.getMonthValue() - 1;
+	    return localDate.getYear() + "-" + month + "-" + localDate.getDayOfMonth();
     }
 
     @Override
     public String toString() {
-        return localDate.getYear() + " " + localDate.getMonth() + " " + localDate.getDayOfMonth();
+	    return localDate.getYear() + "-" + localDate.getMonthValue() + "-" + localDate.getDayOfMonth();
     }
 
     @Override

@@ -5,20 +5,20 @@ import java.math.BigDecimal;
 public class Marcia {
 //   public static Object[] HEADER = {"Progressivo", "Data", "Giorni", "Edizione", "Denominazione",
 //	"Localita'", "Zona", "Km", "Tempo"};
-    private int id = 0;
+    private Integer id = 0;
     private DataDelCalendario dataInizio;
     private DataDelCalendario dataFine;
     private String nomeEvento;
-    private int edizione = 0;
+    private Integer edizione = 0;
     private Posto posto;
     private BigDecimal km = new BigDecimal("0.000");
     private Tempo tempo = new Tempo(0);
 
-    public int getId() {
+    public Integer getId() {
 	return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
 	this.id = id;
     }
 
@@ -38,11 +38,11 @@ public class Marcia {
 	this.dataInizio = dataInizio;
     }
 
-    public int getEdizione() {
+    public Integer getEdizione() {
 	return edizione;
     }
 
-    public void setEdizione(int edizione) {
+    public void setEdizione(Integer edizione) {
 	this.edizione = edizione;
     }
 

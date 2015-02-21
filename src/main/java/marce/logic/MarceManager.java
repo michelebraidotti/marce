@@ -1,17 +1,17 @@
 package marce.logic;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import marce.NotFoudException;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
 import marce.domain.Posto;
 import marce.domain.Tempo;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *

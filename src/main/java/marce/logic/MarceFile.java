@@ -1,21 +1,13 @@
 package marce.logic;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import marce.domain.*;
+
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import marce.domain.DataDelCalendario;
-import marce.domain.Marcia;
-import marce.domain.ParsingException;
-import marce.domain.Posto;
-import marce.domain.Tempo;
 
 /**
  *
