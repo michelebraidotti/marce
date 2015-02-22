@@ -102,16 +102,6 @@ public class MarceManager {
         return denominazioniSet;
     }
     
-    public String[] getDenominazioniListAsArray() {
-        Set<String> denominazioni = getDenominazioniList();
-        String[] denominazioniArr = new String[denominazioni.size()];
-        int i = 0;
-        for (String d:denominazioni) {
-            denominazioniArr[i++] = d;
-        }
-        return denominazioniArr;
-    }
-    
     
     public Set<Posto> getPostiList() {
         List<Posto> posti = new ArrayList<>();
@@ -122,18 +112,8 @@ public class MarceManager {
         Set<Posto> postiSet = new TreeSet<>(posti);
         return postiSet;
     }
-    
-    public Posto[] getPostiListAsArray() {
-        Set<Posto> posti = getPostiList();
-        Posto[] postiArr = new Posto[posti.size()];
-        int i = 0;
-        for (Posto p:posti) {
-            postiArr[i++] = p;
-        }
-        return postiArr;
-    }
 
-    public BigDecimal totaleKm() {
+    public static BigDecimal TotaleKm(List<Marcia> marce) {
         BigDecimal totale = new BigDecimal("0.00");
         for (Marcia marcia:marce) {
             totale = totale.add(marcia.getKm());
@@ -141,7 +121,7 @@ public class MarceManager {
         return totale;
     }
 
-    public Tempo totaleTempo() throws ParsingException {
+    public static Tempo TotaleTempo(List<Marcia> marce) throws ParsingException {
         Tempo totale = new Tempo(0);
         for (Marcia marcia:marce) {
             totale = totale.add(marcia.getTempo());

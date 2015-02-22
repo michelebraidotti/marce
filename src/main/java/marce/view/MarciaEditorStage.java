@@ -37,11 +37,13 @@ public class MarciaEditorStage extends Stage {
     private final TextField secondi;
     private final PostoEditorStage postoEditorStage;
 
+    private MarcePrimaryStage primaryStage;
     private Marcia marcia;
 
     public MarciaEditorStage(MarcePrimaryStage primaryStage, Marcia existingMarcia, Set<String> denominazioni, Set<Posto> posti) {
         this.initModality(Modality.WINDOW_MODAL);
         this.initOwner(primaryStage);
+        this.primaryStage = primaryStage;
         postoEditorStage = new PostoEditorStage(this);
         if (existingMarcia == null) {
             this.marcia = new Marcia();
@@ -74,6 +76,7 @@ public class MarciaEditorStage extends Stage {
         ObservableList<String> options = FXCollections.observableList(new ArrayList(denominazioni));
         nomeMarciaComboBox = new ComboBox(options);
         nomeMarciaComboBox.setEditable(true);
+        nomeMarciaComboBox.setMaxWidth(350);
         grid.add(nomeMarciaComboBox, 1, rowNumber);
 
         Label edizioneLabel = new Label("Edizione:");
@@ -99,6 +102,7 @@ public class MarciaEditorStage extends Stage {
         grid.add(postoLabel, 0, rowNumber);
         ObservableList<Posto> optionsPosto = FXCollections.observableList(new ArrayList(posti));
         postoComboBox = new ComboBox(optionsPosto);
+        postoComboBox.setMaxWidth(350);
         grid.add(postoComboBox, 1, rowNumber);
         Button postoButton = new Button("Aggiungi posto");
         postoButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -193,7 +197,7 @@ public class MarciaEditorStage extends Stage {
         buttonsGrid.add(cancelBtn, 1, 1);
         grid.add(buttonsGrid, 0, rowNumber, 4, 1);
 
-        Scene scene = new Scene(grid, 800, 600);
+        Scene scene = new Scene(grid, 850, 350);
         this.setTitle("Marcia");
         this.setScene(scene);
     }
@@ -208,14 +212,9 @@ public class MarciaEditorStage extends Stage {
         try {
             marcia.setTempo(new Tempo(ore.getText() + ":" + minuti.getText() + ":" + secondi.getText()));
         } catch (ParsingException e) {
-            // TODO Show exception
-            e.printStackTrace();
+            primaryStage.showError(e);
         }
         return marcia;
-    }
-
-    public void setMarcia(Marcia marcia) {
-        this.marcia = marcia;
     }
 
     public void onNewPostoEvent(Posto posto) {

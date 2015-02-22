@@ -7,18 +7,16 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import marce.domain.DataDelCalendario;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
-import marce.domain.Tempo;
 import marce.logic.InvalidIdException;
 import marce.logic.MarceFile;
 import marce.logic.MarceManager;
@@ -26,7 +24,6 @@ import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +31,11 @@ import java.util.List;
  * Created by michele on 2/16/15.
  */
 public class MarcePrimaryStage extends Stage {
-    private TableView table = null;
-    private MarciaEditorStage newMarciaStage = null;
+    private MarceTableView marceTableView = null;
     private MarceManager marceManager = new MarceManager();
     private ObservableList<Marcia> marceList;
 
     public MarcePrimaryStage() {
-        this.newMarciaStage = new MarciaEditorStage(this, null, marceManager.getDenominazioniList(), marceManager.getPostiList());
-
         GridPane root = new GridPane();
         ColumnConstraints column = new ColumnConstraints();
         column.setPercentWidth(100);
@@ -55,50 +49,18 @@ public class MarcePrimaryStage extends Stage {
         //button bar
         root.add(buildToolBar(), 0, 1);
 
-        // main table
-        table = new TableView();
-        table.setEditable(true);
+        // main marceTableView
+        marceTableView = new MarceTableView();
+        marceTableView.setEditable(true);
 
-        TableColumn progressivoCol = new TableColumn("Progressivo");
-        progressivoCol.setMinWidth(100);
-        progressivoCol.setCellValueFactory(new PropertyValueFactory("id"));
-
-        TableColumn eventoCol = new TableColumn("Evento");
-        eventoCol.setMinWidth(350);
-        eventoCol.setCellValueFactory(new PropertyValueFactory<>("nomeEvento"));
-
-        TableColumn edizioneCol = new TableColumn("Edizione");
-        edizioneCol.setMinWidth(100);
-        edizioneCol.setCellValueFactory(new PropertyValueFactory<>("edizione"));
-
-        TableColumn dataInizioCol = new TableColumn("Data Inizio");
-        dataInizioCol.setMinWidth(100);
-        dataInizioCol.setCellValueFactory(new PropertyValueFactory<>("dataInizio"));
-
-        TableColumn dataFineCol = new TableColumn("Data Fine");
-        dataFineCol.setMinWidth(100);
-        dataFineCol.setCellValueFactory(new PropertyValueFactory<>("dataFine"));
-
-        TableColumn postoCol = new TableColumn("Posto");
-        postoCol.setMinWidth(200);
-        postoCol.setCellValueFactory(new PropertyValueFactory<>("posto"));
-
-        TableColumn distanzaCol = new TableColumn("Distanza");
-        distanzaCol.setMinWidth(100);
-        distanzaCol.setCellValueFactory(new PropertyValueFactory<>("km"));
-
-        TableColumn tempoCol = new TableColumn("Tempo");
-        tempoCol.setMinWidth(100);
-        tempoCol.setCellValueFactory(new PropertyValueFactory<>("tempo"));
-
-        table.getColumns().addAll(progressivoCol, eventoCol, edizioneCol, dataInizioCol, dataFineCol, postoCol, distanzaCol, tempoCol);
         marceList = FXCollections.observableArrayList();
-        table.setItems(marceList);
+        marceTableView.setItems(marceList);
 
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 10, 10, 10));
-        vbox.getChildren().addAll(table);
+        marceTableView.setPrefHeight(800);
+        vbox.getChildren().addAll(marceTableView);
         root.add(vbox, 0, 2);
 
         setTitle("Gestione Marce");
@@ -131,12 +93,19 @@ public class MarcePrimaryStage extends Stage {
 
         Button buttonSave = new Button("Salva", new ImageView(new Image("icons/save_32.png")));
         buttonSave.setContentDisplay(ContentDisplay.TOP);
+        buttonSave.setOnAction(new SaveAction());
+
         Button buttonSaveNew = new Button("Salva Con Nome", new ImageView(new Image("icons/save_32.png")));
         buttonSaveNew.setContentDisplay(ContentDisplay.TOP);
+        buttonSaveNew.setOnAction(new SaveWithNameAction());
+
         Button buttonPrint = new Button("Stampa", new ImageView(new Image("icons/print_32.png")));
         buttonPrint.setContentDisplay(ContentDisplay.TOP);
+        buttonPrint.setOnAction(new PrintAction());
+
         Button buttonSearch = new Button("Cerca", new ImageView(new Image("icons/search_32.png")));
         buttonSearch.setContentDisplay(ContentDisplay.TOP);
+        buttonSearch.setOnAction(new SearchAction());
 
         toolBar.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch);
         return toolBar;
@@ -153,9 +122,18 @@ public class MarcePrimaryStage extends Stage {
         openItem.setOnAction(new OpenAction());
 
         MenuItem saveItem = new MenuItem("Salva");
-        saveItem.setOnAction(new SaveAction());
+        saveItem.setOnAction(new SaveWithNameAction());
 
-        menuFile.getItems().addAll(newItem, openItem, saveItem);
+        MenuItem saveNewItem = new MenuItem("Salva Con Nome");
+        saveNewItem.setOnAction(new SaveAction());
+
+        MenuItem printItem = new MenuItem("Stampa");
+        printItem.setOnAction(new PrintAction());
+
+        MenuItem searchItem = new MenuItem("Cerca");
+        searchItem.setOnAction(new SearchAction());
+
+        menuFile.getItems().addAll(newItem, openItem, saveItem, saveNewItem, printItem, searchItem);
 
         Menu menuHelp = new Menu("Aiuto");
         menuBar.getMenus().addAll(menuFile, menuHelp);
@@ -167,12 +145,13 @@ public class MarcePrimaryStage extends Stage {
         @Override
         public void handle(ActionEvent event) {
             Marcia marcia = marceManager.getNew();
+            MarciaEditorStage newMarciaStage = new MarciaEditorStage(MarcePrimaryStage.this, null, marceManager.getDenominazioniList(), marceManager.getPostiList());
             newMarciaStage.show();
-
         }
     }
 
     private class OpenAction implements EventHandler<ActionEvent> {
+
         @Override
         public void handle(ActionEvent event) {
             FileChooser fileChooser = new FileChooser();
@@ -196,7 +175,7 @@ public class MarcePrimaryStage extends Stage {
         }
     }
 
-    private void showError(Exception e) {
+    protected void showError(Exception e) {
         Dialogs.create()
                 .owner(MarcePrimaryStage.this)
                 .title("Error Dialog")
@@ -210,6 +189,31 @@ public class MarcePrimaryStage extends Stage {
         @Override
         public void handle(ActionEvent event) {
 
+        }
+    }
+
+    private class SaveWithNameAction implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+
+        }
+    }
+
+    private class PrintAction implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+
+        }
+    }
+
+    private class SearchAction implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            MarceSearchStage marceSearchStage = new MarceSearchStage(marceManager.getMarce());
+            marceSearchStage.show();
         }
     }
 }
