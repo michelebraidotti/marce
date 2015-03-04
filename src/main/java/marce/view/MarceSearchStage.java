@@ -9,9 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -43,6 +41,8 @@ public class MarceSearchStage extends Stage {
         GridPane root = new GridPane();
         ColumnConstraints column = new ColumnConstraints();
         column.setPercentWidth(100);
+        root.setHgap(10);
+        root.setVgap(10);
         root.getColumnConstraints().addAll(column);
 
         Scene scene = new Scene(root, 1200, 800);
@@ -50,7 +50,10 @@ public class MarceSearchStage extends Stage {
         int rowNumber = 0;
         Text sceneTitle = new Text("Cerca marce");
         sceneTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        root.add(sceneTitle, 0, rowNumber);
+        VBox titleBox = new VBox();
+        titleBox.setPadding(new Insets(10, 10, 10, 10));
+        titleBox.getChildren().addAll(sceneTitle);
+        root.add(titleBox, 0, rowNumber);
 
         rowNumber++;
         TabPane tabPane = new TabPane();

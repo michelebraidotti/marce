@@ -3,6 +3,7 @@ package marce.view;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import marce.domain.Marcia;
 
 /**
  * Created by michele on 2/22/15.
