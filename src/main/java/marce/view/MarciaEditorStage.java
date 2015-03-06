@@ -1,5 +1,6 @@
 package marce.view;
 
+import org.apache.commons.lang3.StringUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,7 +16,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import marce.commons.MarceDialogs;
 import marce.domain.*;
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -171,14 +174,19 @@ public class MarciaEditorStage extends Stage {
             public void handle(ActionEvent e) {
 
                 System.out.println("Hello world!");
-                marcia = getMarcia();
-                if (marcia.getId() == 0) {
-                    primaryStage.onMarciaCreated(marcia);
+                try {
+                    marcia = getMarcia();
+                    if (marcia.getId() == 0) {
+                        primaryStage.onMarciaCreated(marcia);
+                    } else {
+                        primaryStage.onMarciaUpdated(marcia);
+                    }
+                    close();
                 }
-                else {
-                    primaryStage.onMarciaUpdated(marcia);
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                    MarceDialogs.showError(MarciaEditorStage.this, ex);
                 }
-
             }
         });
         buttonsGrid.add(hbNewBtn, 0, 1);
@@ -202,18 +210,26 @@ public class MarciaEditorStage extends Stage {
         this.setScene(scene);
     }
 
-    public Marcia getMarcia() {
+    public Marcia getMarcia() throws Exception {
+        if ( nomeMarciaComboBox.getValue() == null ) throw new Exception("Il nome dell'evento e' obbligatorio");
         marcia.setNomeEvento(nomeMarciaComboBox.getValue().toString());
+        if (StringUtils.isEmpty(edizione.getText())) edizione.setText("0");
         marcia.setEdizione(Integer.parseInt(edizione.getText()));
+        if (postoComboBox.getValue() == null) postoComboBox.setValue(PostoFactory.getPostoIngoto());
         marcia.setPosto((Posto) postoComboBox.getValue());
+        if (dataInizio.getValue() == null) throw new Exception("La data inizio e' obbligatoria");
         marcia.setDataInizio(new DataDelCalendario(dataInizio.getValue()));
-        marcia.setDataFine(new DataDelCalendario(dataFine.getValue()));
-        marcia.setKm(new BigDecimal(km.getText() + "." + metri.getText()));
-        try {
-            marcia.setTempo(new Tempo(ore.getText() + ":" + minuti.getText() + ":" + secondi.getText()));
-        } catch (ParsingException e) {
-            primaryStage.showError(e);
+        if ( dataFine.getValue() == null ) {
+            dataFine.setValue(dataInizio.getValue());
         }
+        marcia.setDataFine(new DataDelCalendario(dataFine.getValue()));
+        if ( StringUtils.isEmpty(km.getText() )) km.setText("0");
+        if ( StringUtils.isEmpty(metri.getText() )) metri.setText("0");
+        marcia.setKm(new BigDecimal(km.getText() + "." + metri.getText()));
+        if (StringUtils.isEmpty(ore.getText())) ore.setText("0");
+        if (StringUtils.isEmpty(minuti.getText())) minuti.setText("0");
+        if (StringUtils.isEmpty(secondi.getText())) secondi.setText("0");
+        marcia.setTempo(new Tempo(ore.getText() + ":" + minuti.getText() + ":" + secondi.getText()));
         return marcia;
     }
 

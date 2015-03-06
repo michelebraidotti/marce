@@ -5,16 +5,19 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import marce.commons.MarceDialogs;
 import marce.domain.Marcia;
 import marce.domain.ParsingException;
 import marce.logic.InvalidIdException;
@@ -34,6 +37,8 @@ public class MarcePrimaryStage extends Stage {
     private MarceTableView marceTableView = null;
     private MarceManager marceManager = new MarceManager();
     private ObservableList<Marcia> marceList;
+    private File marceFile;
+    private final Label marceFilePathLabel;
 
     public MarcePrimaryStage() {
         GridPane root = new GridPane();
@@ -59,19 +64,40 @@ public class MarcePrimaryStage extends Stage {
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 10, 10, 10));
-        marceTableView.setPrefHeight(800);
+        marceTableView.setPrefHeight(700);
         vbox.getChildren().addAll(marceTableView);
         root.add(vbox, 0, 2);
 
+        GridPane bottomPane = new GridPane();
+        bottomPane.setMaxHeight(90);
+        bottomPane.setPadding(new Insets(0, 10, 10, 10));
+        Label marceFileLabel = new Label("File in uso: ");
+        bottomPane.add(marceFileLabel, 0, 0);
+        marceFilePathLabel = new Label("Nessun file");
+        bottomPane.add(marceFilePathLabel, 1, 0);
+
+        root.add(bottomPane, 0, 3);
+
         setTitle("Gestione Marce");
         setScene(scene);
+    }
+
+    private File getMarceFile() {
+        return marceFile;
+    }
+
+    private void setMarceFile(File marceFile) {
+        this.marceFile = marceFile;
+        marceFilePathLabel.setText(this.marceFile == null? "No file" : this.marceFile.getAbsolutePath());
     }
 
     public void onMarciaCreated(Marcia marcia) {
         try {
             marceManager.add(marcia);
         } catch (InvalidIdException e) {
-            showError(e);
+            MarceDialogs.showError(this, e);
+            MarciaEditorStage newMarciaStage = new MarciaEditorStage(MarcePrimaryStage.this, marcia, marceManager.getDenominazioniList(), marceManager.getPostiList());
+            newMarciaStage.show();
         }
         marceList.add(marcia);
     }
@@ -144,7 +170,6 @@ public class MarcePrimaryStage extends Stage {
 
         @Override
         public void handle(ActionEvent event) {
-            Marcia marcia = marceManager.getNew();
             MarciaEditorStage newMarciaStage = new MarciaEditorStage(MarcePrimaryStage.this, null, marceManager.getDenominazioniList(), marceManager.getPostiList());
             newMarciaStage.show();
         }
@@ -159,15 +184,15 @@ public class MarcePrimaryStage extends Stage {
             fileChooser.setInitialDirectory(
                     new File(System.getProperty("user.home"))
             );
-            File file = fileChooser.showOpenDialog(MarcePrimaryStage.this);
-            if (file != null) {
+            setMarceFile(fileChooser.showOpenDialog(MarcePrimaryStage.this));
+            if (getMarceFile() != null) {
                 List<Marcia> marce = new ArrayList<Marcia>();
                 try {
-                    marce = MarceFile.loadFromFile(file.getAbsolutePath());
+                    marce = MarceFile.loadFromFile(getMarceFile().getAbsolutePath());
                 } catch (IOException e) {
-                    showError(e);
+                    MarceDialogs.showError(MarcePrimaryStage.this, e);
                 } catch (ParsingException e) {
-                    showError(e);
+                    MarceDialogs.showError(MarcePrimaryStage.this, e);
                 }
                 marceManager.setMarce(marce);
                 marceList.addAll(marce);
@@ -175,20 +200,17 @@ public class MarcePrimaryStage extends Stage {
         }
     }
 
-    protected void showError(Exception e) {
-        Dialogs.create()
-                .owner(MarcePrimaryStage.this)
-                .title("Error Dialog")
-                .masthead("Problema.")
-                .message(e.getMessage())
-                .showError();
-    }
-
     private class SaveAction implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
-
+            if (getMarceFile() != null) {
+                try {
+                    MarceFile.writeToFile(getMarceFile().getAbsolutePath(), marceManager.getMarce());
+                } catch (IOException e) {
+                    MarceDialogs.showError(MarcePrimaryStage.this, e);
+                }
+            }
         }
     }
 
@@ -196,7 +218,17 @@ public class MarcePrimaryStage extends Stage {
 
         @Override
         public void handle(ActionEvent event) {
-
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Nuovo file marce");
+            fileChooser.setInitialDirectory(
+                    new File(System.getProperty("user.home"))
+            );
+            setMarceFile(fileChooser.showSaveDialog(MarcePrimaryStage.this));
+            try {
+                MarceFile.writeToFile(getMarceFile().getAbsolutePath(), marceManager.getMarce());
+            } catch (IOException e) {
+                MarceDialogs.showError(MarcePrimaryStage.this, e);
+            }
         }
     }
 
@@ -205,6 +237,26 @@ public class MarcePrimaryStage extends Stage {
         @Override
         public void handle(ActionEvent event) {
 
+            Printer printer = Printer.getDefaultPrinter();
+            Stage dialogStage = new Stage(StageStyle.DECORATED);
+            PrinterJob job = PrinterJob.createPrinterJob(printer);
+            if (job != null) {
+                boolean showDialog = job.showPageSetupDialog(dialogStage);
+                if (showDialog) {
+                    marceTableView.setScaleX(0.60);
+                    marceTableView.setScaleY(0.60);
+                    marceTableView.setTranslateX(-220);
+                    marceTableView.setTranslateY(-70);
+                    boolean success = job.printPage(marceTableView);
+                    if (success) {
+                        job.endJob();
+                    }
+                    marceTableView.setTranslateX(0);
+                    marceTableView.setTranslateY(0);
+                    marceTableView.setScaleX(1.0);
+                    marceTableView.setScaleY(1.0);
+                }
+            }
         }
     }
 

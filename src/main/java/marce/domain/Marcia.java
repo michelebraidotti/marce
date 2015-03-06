@@ -43,7 +43,7 @@ public class Marcia {
     }
 
     public void setEdizione(Integer edizione) {
-	this.edizione = edizione;
+	    this.edizione = edizione;
     }
 
     public Posto getPosto() {

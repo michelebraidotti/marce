@@ -36,12 +36,6 @@ public class MarceManager {
         this.marce = marce;
     }
     
-    public Marcia getNew() {
-        Marcia marcia = new Marcia();
-        marcia.setId(getNextId());
-        return marcia;
-    }
-    
     public Marcia getMarcia(int marciaId) throws NotFoudException {
         for ( Marcia marcia:marce ) {
             if ( marcia.getId() == marciaId ) return marcia;
@@ -85,10 +79,10 @@ public class MarceManager {
     }
 
     public boolean add(Marcia m) throws InvalidIdException {
-        if ( m.getId() == 0 )
-            throw new InvalidIdException("Una nuova marcia non puo'avere id zero");
-        else 
-            return marce.add(m);
+        if ( m.getId() == 0 ) {
+            m.setId(getNextId());
+        }
+        return marce.add(m);
     }
     
     public Set<String> getDenominazioniList() {

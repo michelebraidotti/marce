@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -57,7 +58,7 @@ public class MarceSearchStage extends Stage {
 
         rowNumber++;
         TabPane tabPane = new TabPane();
-        tabPane.setMinHeight(140);
+        tabPane.setMinHeight(90);
         tabPane.getTabs().addAll(buildCercaPerAnnoTab(), buildCercaPerPostoTab(), buildCercaPerMarciaTab(), buildCercaPerKmTab());
         root.add(tabPane, 0, rowNumber);
 
@@ -76,85 +77,74 @@ public class MarceSearchStage extends Stage {
         setScene(scene);
     }
 
-    private Tab buildCercaPerAnnoTab() {
-        Tab tab = new Tab();
-        tab.setText("Per anno");
+    private class SearchTab extends Tab {
+        private final GridPane grid;
 
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        public SearchTab(String title) {
+            setText(title);
+            setClosable(false);
+
+            grid = new GridPane();
+            grid.setAlignment(Pos.CENTER);
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(25, 25, 25, 25));
+            setContent(grid);
+        }
+
+        public void add(Node child, int columnIndex, int rowIndex) {
+            grid.add(child, columnIndex, rowIndex);
+        }
+
+    }
+
+    private Tab buildCercaPerAnnoTab() {
+        SearchTab tab = new SearchTab("Per anno");
 
         Label annoLabel = new Label("Anno:");
-        grid.add(annoLabel, 0, 0);
+        tab.add(annoLabel, 0, 0);
         perAnno = new TextField();
-        grid.add(perAnno, 1, 0);
+        tab.add(perAnno, 1, 0);
 
-        tab.setContent(grid);
         return tab;
     }
 
     private Tab buildCercaPerPostoTab() {
-        Tab tab = new Tab();
-        tab.setText("Per posto");
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        SearchTab tab = new SearchTab("Per posto");
 
         Label postoLabel = new Label("Posto:");
-        grid.add(postoLabel, 0, 0);
+        tab.add(postoLabel, 0, 0);
         perPosto = new TextField();
-        grid.add(perPosto, 1, 0);
+        tab.add(perPosto, 1, 0);
 
-        tab.setContent(grid);
         return tab;
     }
 
     private Tab buildCercaPerMarciaTab() {
-        Tab tab = new Tab();
-        tab.setText("Per marcia");
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        SearchTab tab = new SearchTab("Per marcia");
 
         Label marciaLabel = new Label("Marcia:");
-        grid.add(marciaLabel, 0, 0);
+        tab.add(marciaLabel, 0, 0);
         perMarcia = new TextField();
         perMarcia.setMinWidth(300);
-        grid.add(perMarcia, 1, 0);
+        tab.add(perMarcia, 1, 0);
 
-        tab.setContent(grid);
         return tab;
     }
 
     private Tab buildCercaPerKmTab() {
-        Tab tab = new Tab();
-        tab.setText("Per marcia");
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        SearchTab tab = new SearchTab("Per km");
 
         Label kmMinLabel = new Label("Km minimo:");
-        grid.add(kmMinLabel, 0, 0);
+        tab.add(kmMinLabel, 0, 0);
         perKmMin = new TextField();
-        grid.add(perKmMin, 1, 0);
+        tab.add(perKmMin, 1, 0);
 
         Label kmMaxLabel = new Label("Km massimo:");
-        grid.add(kmMaxLabel, 0, 1);
+        tab.add(kmMaxLabel, 2, 0);
         perKmMax = new TextField();
-        grid.add(perKmMax, 1, 1);
+        tab.add(perKmMax, 3, 0);
 
-        tab.setContent(grid);
         return tab;
     }
 }
