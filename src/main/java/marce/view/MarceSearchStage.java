@@ -2,6 +2,7 @@ package marce.view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,14 +20,20 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import marce.domain.Marcia;
 import marce.logic.MarceManager;
+import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
  * Created by michele on 2/22/15.
  */
 public class MarceSearchStage extends Stage {
-    private final ObservableList<Object> marceList;
+    private final ObservableList<Marcia> marceList;
+    private final Label kmTotali;
+    private final Label tempoTotale;
+    private FilteredList<Marcia> filteredMarceList;
     private MarceTableView marceTableView;
     private MarceManager marceManager;
     private TextField perAnno;
@@ -65,13 +72,27 @@ public class MarceSearchStage extends Stage {
         rowNumber++;
         marceList = FXCollections.observableArrayList();
         marceList.addAll(marceManager.getMarce());
-        marceTableView.setItems(marceList);
+        filteredMarceList = new FilteredList<>(marceList, p -> true);
+        marceTableView.setItems(filteredMarceList);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 10, 10, 10));
         marceTableView.setPrefHeight(800);
         vbox.getChildren().addAll(marceTableView);
         root.add(vbox, 0, rowNumber);
+
+        GridPane bottomPane = new GridPane();
+        bottomPane.setMaxHeight(90);
+        bottomPane.setPadding(new Insets(0, 10, 10, 10));
+        Label kmTotaliLabel = new Label("Km totali: ");
+        bottomPane.add(kmTotaliLabel, 0, 0);
+        kmTotali = new Label("0");
+        bottomPane.add(kmTotali, 1, 0);
+        Label tempoTotaleLabel = new Label("Tempo totale: ");
+        bottomPane.add(tempoTotaleLabel, 2, 0);
+        tempoTotale = new Label("0:0:0");
+        bottomPane.add(tempoTotale, 3, 0);
+        root.add(bottomPane, 0, rowNumber);
 
         setTitle("Cerca Marce");
         setScene(scene);
@@ -106,6 +127,27 @@ public class MarceSearchStage extends Stage {
         perAnno = new TextField();
         tab.add(perAnno, 1, 0);
 
+        perAnno.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredMarceList.setPredicate(marcia -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                Integer annoFilter = null;
+                try {
+                    annoFilter = Integer.parseInt(newValue.toLowerCase());
+                }
+                catch (NumberFormatException nfe) {
+                    annoFilter = null;
+                }
+
+                if (annoFilter == null || marcia.getDataInizio().getLocalDate().getYear() == annoFilter) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
         return tab;
     }
 
@@ -116,6 +158,22 @@ public class MarceSearchStage extends Stage {
         tab.add(postoLabel, 0, 0);
         perPosto = new TextField();
         tab.add(perPosto, 1, 0);
+
+        perPosto.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredMarceList.setPredicate(marcia -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (marcia.getPosto().getLocalita().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                    return true;
+                } else if (marcia.getPosto().getZona().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                    return true;
+                }
+                return false;
+            });
+        });
 
         return tab;
     }
@@ -128,6 +186,21 @@ public class MarceSearchStage extends Stage {
         perMarcia = new TextField();
         perMarcia.setMinWidth(300);
         tab.add(perMarcia, 1, 0);
+
+        perMarcia.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredMarceList.setPredicate(marcia -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (marcia.getNomeEvento().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                    return true;
+                }
+                return false;
+            });
+        });
 
         return tab;
     }
@@ -144,6 +217,7 @@ public class MarceSearchStage extends Stage {
         tab.add(kmMaxLabel, 2, 0);
         perKmMax = new TextField();
         tab.add(perKmMax, 3, 0);
+
 
         return tab;
     }

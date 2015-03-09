@@ -75,7 +75,6 @@ public class MarcePrimaryStage extends Stage {
         bottomPane.add(marceFileLabel, 0, 0);
         marceFilePathLabel = new Label("Nessun file");
         bottomPane.add(marceFilePathLabel, 1, 0);
-
         root.add(bottomPane, 0, 3);
 
         setTitle("Gestione Marce");
