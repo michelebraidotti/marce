@@ -1,6 +1,7 @@
 package marce.view;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
@@ -19,11 +20,13 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import marce.domain.Marcia;
+import marce.domain.ParsingException;
 import marce.logic.MarceManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,7 +75,7 @@ public class MarceSearchStage extends Stage {
         rowNumber++;
         marceList = FXCollections.observableArrayList();
         marceList.addAll(marceManager.getMarce());
-        filteredMarceList = new FilteredList<>(marceList, p -> true);
+        filteredMarceList = new FilteredList<Marcia>(marceList, p -> true);
         marceTableView.setItems(filteredMarceList);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
@@ -81,6 +84,7 @@ public class MarceSearchStage extends Stage {
         vbox.getChildren().addAll(marceTableView);
         root.add(vbox, 0, rowNumber);
 
+        rowNumber++;
         GridPane bottomPane = new GridPane();
         bottomPane.setMaxHeight(90);
         bottomPane.setPadding(new Insets(0, 10, 10, 10));
@@ -88,7 +92,7 @@ public class MarceSearchStage extends Stage {
         bottomPane.add(kmTotaliLabel, 0, 0);
         kmTotali = new Label("0");
         bottomPane.add(kmTotali, 1, 0);
-        Label tempoTotaleLabel = new Label("Tempo totale: ");
+        Label tempoTotaleLabel = new Label(", Tempo totale: ");
         bottomPane.add(tempoTotaleLabel, 2, 0);
         tempoTotale = new Label("0:0:0");
         bottomPane.add(tempoTotale, 3, 0);
@@ -96,6 +100,26 @@ public class MarceSearchStage extends Stage {
 
         setTitle("Cerca Marce");
         setScene(scene);
+
+        filteredMarceList.addListener(new ListChangeListener<Marcia>(){
+
+            @Override
+            public void onChanged(javafx.collections.ListChangeListener.Change<? extends Marcia> pChange) {
+                List<Marcia> filteredMarce = new ArrayList<Marcia>();
+                while (filteredMarceList.listIterator().hasNext()) {
+                    filteredMarce.add(filteredMarce.listIterator().next());
+                }
+                kmTotali.setText(MarceManager.TotaleKm(filteredMarce) + "");
+                try {
+                    tempoTotale.setText(MarceManager.TotaleTempo(filteredMarce).toString());
+                } catch (ParsingException e) {
+                    tempoTotale.setText("??");
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
     }
 
     private class SearchTab extends Tab {
