@@ -1,5 +1,7 @@
 package marce.view;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -106,8 +109,9 @@ public class MarceSearchStage extends Stage {
             @Override
             public void onChanged(javafx.collections.ListChangeListener.Change<? extends Marcia> pChange) {
                 List<Marcia> filteredMarce = new ArrayList<Marcia>();
-                while (filteredMarceList.listIterator().hasNext()) {
-                    filteredMarce.add(filteredMarce.listIterator().next());
+                Iterator<Marcia> filteredMarceIterator = filteredMarceList.listIterator();
+                while (filteredMarceIterator.hasNext()) {
+                    filteredMarce.add(filteredMarceIterator.next());
                 }
                 kmTotali.setText(MarceManager.TotaleKm(filteredMarce) + "");
                 try {
@@ -242,7 +246,25 @@ public class MarceSearchStage extends Stage {
         perKmMax = new TextField();
         tab.add(perKmMax, 3, 0);
 
+        perKmMin.textProperty().addListener(new KmChangeListener());
 
         return tab;
+    }
+
+    private class KmChangeListener implements ChangeListener<Marcia> {
+
+        @Override
+        public void changed(ObservableValue<? extends Marcia> observable, Marcia oldValue, Marcia newValue) {
+            filteredMarceList.setPredicate(marcia -> {
+                if (!StringUtils.isEmpty(perKmMin.getText()) && !StringUtils.isEmpty(perKmMax.getText())) {
+                    BigDecimal min = new BigDecimal(perKmMin.getText());
+                    BigDecimal max = new BigDecimal(perKmMax.getText());
+                    BigDecimal marciaKm = marcia.getKm();
+                    if ( marciaKm.compareTo(min) == 1 && marciaKm.compareTo(max) == -1 ) return true;
+                    return false;
+                }
+                return  true;
+            });
+        }
     }
 }
