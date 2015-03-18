@@ -15,8 +15,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -247,14 +245,15 @@ public class MarceSearchStage extends Stage {
         tab.add(perKmMax, 3, 0);
 
         perKmMin.textProperty().addListener(new KmChangeListener());
+        perKmMax.textProperty().addListener(new KmChangeListener());
 
         return tab;
     }
 
-    private class KmChangeListener implements ChangeListener<Marcia> {
+    private class KmChangeListener implements ChangeListener<Object> {
 
         @Override
-        public void changed(ObservableValue<? extends Marcia> observable, Marcia oldValue, Marcia newValue) {
+        public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
             filteredMarceList.setPredicate(marcia -> {
                 if (!StringUtils.isEmpty(perKmMin.getText()) && !StringUtils.isEmpty(perKmMax.getText())) {
                     BigDecimal min = new BigDecimal(perKmMin.getText());
@@ -265,6 +264,8 @@ public class MarceSearchStage extends Stage {
                 }
                 return  true;
             });
+
         }
+
     }
 }
