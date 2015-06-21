@@ -107,7 +107,7 @@ public class MarceManager {
         return postiSet;
     }
 
-    public static BigDecimal TotaleKm(List<Marcia> marce) {
+    public static BigDecimal totaleKm(List<Marcia> marce) {
         BigDecimal totale = new BigDecimal("0.00");
         for (Marcia marcia:marce) {
             totale = totale.add(marcia.getKm());
@@ -115,7 +115,7 @@ public class MarceManager {
         return totale;
     }
 
-    public static Tempo TotaleTempo(List<Marcia> marce) throws ParsingException {
+    public static Tempo totaleTempo(List<Marcia> marce) throws ParsingException {
         Tempo totale = new Tempo(0);
         for (Marcia marcia:marce) {
             totale = totale.add(marcia.getTempo());

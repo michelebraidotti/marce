@@ -87,7 +87,7 @@ public class Marcia {
 	    return false;
 	}
 	final Marcia other = (Marcia) obj;
-	if (this.id != other.id) {
+	if (! this.id.equals(other.id) ) {
 	    return false;
 	}
 	return true;

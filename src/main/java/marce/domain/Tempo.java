@@ -6,7 +6,7 @@ package marce.domain;
  */
 public class Tempo {
     private Integer value;
-    public static String SEPARATOR = ":";
+    public final static String SEPARATOR = ":";
 
     public Tempo(Integer t) {
 	value = t;

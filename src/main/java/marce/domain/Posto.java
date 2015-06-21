@@ -7,7 +7,7 @@ package marce.domain;
 public class Posto implements Comparable {
     private String localita;
     private String zona;
-    public static String SEPARATOR = ", ";
+    public final static String SEPARATOR = ", ";
 
     public Posto() {
     }

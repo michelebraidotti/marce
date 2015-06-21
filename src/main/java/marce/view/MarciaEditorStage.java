@@ -40,13 +40,11 @@ public class MarciaEditorStage extends Stage {
     private final TextField secondi;
     private final PostoEditorStage postoEditorStage;
 
-    private MarcePrimaryStage primaryStage;
     private Marcia marcia;
 
     public MarciaEditorStage(MarcePrimaryStage primaryStage, Marcia existingMarcia, Set<String> denominazioni, Set<Posto> posti) {
         this.initModality(Modality.WINDOW_MODAL);
         this.initOwner(primaryStage);
-        this.primaryStage = primaryStage;
         postoEditorStage = new PostoEditorStage(this);
         if (existingMarcia == null) {
             this.marcia = new Marcia();
@@ -164,7 +162,7 @@ public class MarciaEditorStage extends Stage {
         buttonsGrid.setVgap(10);
         buttonsGrid.setPadding(new Insets(25, 25, 25, 25));
 
-        Button newBtn = new Button((marcia == null || marcia.getId() == 0) ? "Salva" : "Aggiorna");
+        Button newBtn = new Button((marcia.getId() == 0) ? "Salva" : "Aggiorna");
         HBox hbNewBtn = new HBox(10);
         hbNewBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbNewBtn.getChildren().add(newBtn);

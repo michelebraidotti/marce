@@ -14,17 +14,27 @@ import java.util.regex.Pattern;
  * @author michele
  */
 public class MarceFile {
-    public static String DELIMITER="\"";
-    public static String SEPARATOR=";";
-    public static int COL_COUNT = 9;
+    public final static String DELIMITER="\"";
+    public final static String SEPARATOR=";";
+    public final static int COL_COUNT = 9;
     
     public static List<Marcia> loadFromFile(String absPath) throws FileNotFoundException, IOException, ParsingException {
         List<String> lines = new ArrayList<String>();
-        BufferedReader readbuffer = new BufferedReader(new FileReader(absPath));
-        String strRead;
-        while ( (strRead=readbuffer.readLine()) != null ){
-            lines.add(strRead);
+        BufferedReader readbuffer = null;
+        try {
+            readbuffer = new BufferedReader(new FileReader(absPath));
+            String strRead;
+            while ((strRead = readbuffer.readLine()) != null) {
+                lines.add(strRead);
+            }
         }
+        catch (IOException e) {
+            throw  e;
+        }
+        finally {
+            if (readbuffer != null) readbuffer.close();
+        }
+
         List<Marcia> marce = new ArrayList<>();
         for (String line:lines) {
             String[] entries = line.split(SEPARATOR);
