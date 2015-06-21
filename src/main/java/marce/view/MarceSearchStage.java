@@ -1,6 +1,9 @@
 package marce.view;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
@@ -12,18 +15,19 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import marce.domain.Marcia;
+import marce.domain.ParsingException;
 import marce.logic.MarceManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -72,7 +76,7 @@ public class MarceSearchStage extends Stage {
         rowNumber++;
         marceList = FXCollections.observableArrayList();
         marceList.addAll(marceManager.getMarce());
-        filteredMarceList = new FilteredList<>(marceList, p -> true);
+        filteredMarceList = new FilteredList<Marcia>(marceList, p -> true);
         marceTableView.setItems(filteredMarceList);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
@@ -81,6 +85,7 @@ public class MarceSearchStage extends Stage {
         vbox.getChildren().addAll(marceTableView);
         root.add(vbox, 0, rowNumber);
 
+        rowNumber++;
         GridPane bottomPane = new GridPane();
         bottomPane.setMaxHeight(90);
         bottomPane.setPadding(new Insets(0, 10, 10, 10));
@@ -88,7 +93,7 @@ public class MarceSearchStage extends Stage {
         bottomPane.add(kmTotaliLabel, 0, 0);
         kmTotali = new Label("0");
         bottomPane.add(kmTotali, 1, 0);
-        Label tempoTotaleLabel = new Label("Tempo totale: ");
+        Label tempoTotaleLabel = new Label(", Tempo totale: ");
         bottomPane.add(tempoTotaleLabel, 2, 0);
         tempoTotale = new Label("0:0:0");
         bottomPane.add(tempoTotale, 3, 0);
@@ -96,6 +101,27 @@ public class MarceSearchStage extends Stage {
 
         setTitle("Cerca Marce");
         setScene(scene);
+
+        filteredMarceList.addListener(new ListChangeListener<Marcia>(){
+
+            @Override
+            public void onChanged(javafx.collections.ListChangeListener.Change<? extends Marcia> pChange) {
+                List<Marcia> filteredMarce = new ArrayList<Marcia>();
+                Iterator<Marcia> filteredMarceIterator = filteredMarceList.listIterator();
+                while (filteredMarceIterator.hasNext()) {
+                    filteredMarce.add(filteredMarceIterator.next());
+                }
+                kmTotali.setText(MarceManager.TotaleKm(filteredMarce) + "");
+                try {
+                    tempoTotale.setText(MarceManager.TotaleTempo(filteredMarce).toString());
+                } catch (ParsingException e) {
+                    tempoTotale.setText("??");
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
     }
 
     private class SearchTab extends Tab {
@@ -218,7 +244,28 @@ public class MarceSearchStage extends Stage {
         perKmMax = new TextField();
         tab.add(perKmMax, 3, 0);
 
+        perKmMin.textProperty().addListener(new KmChangeListener());
+        perKmMax.textProperty().addListener(new KmChangeListener());
 
         return tab;
+    }
+
+    private class KmChangeListener implements ChangeListener<Object> {
+
+        @Override
+        public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+            filteredMarceList.setPredicate(marcia -> {
+                if (!StringUtils.isEmpty(perKmMin.getText()) && !StringUtils.isEmpty(perKmMax.getText())) {
+                    BigDecimal min = new BigDecimal(perKmMin.getText());
+                    BigDecimal max = new BigDecimal(perKmMax.getText());
+                    BigDecimal marciaKm = marcia.getKm();
+                    if ( marciaKm.compareTo(min) == 1 && marciaKm.compareTo(max) == -1 ) return true;
+                    return false;
+                }
+                return  true;
+            });
+
+        }
+
     }
 }
