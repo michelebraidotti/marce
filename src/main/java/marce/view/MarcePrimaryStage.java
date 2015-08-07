@@ -38,7 +38,18 @@ public class MarcePrimaryStage extends Stage {
     private MarceManager marceManager = new MarceManager();
     private ObservableList<Marcia> marceList;
     private File marceFile;
-    private final Label marceFilePathLabel;
+    private CurrentlyOpenedFileView currentlyOpenedFileView;
+
+
+    private static String MAIN_WINDOW_TITLE_TEXT = "Gestione Marce";
+    private static String FILE_MENU_TEXT = "FIle";
+    private static String AIUTO_MENU_TEXT = "Aiuto";
+    private static String NUOVA_MARCIA_TEXT = "Nuova Marcia";
+    private static String APRI_FILE_TEXT = "Apri";
+    private static String SALVA_FILE_TEXT = "Salva";
+    private static String SALVA_FILE_CON_NOME_TEXT = "Salva Con Nome";
+    private static String STAMPA_MARCE_TEXT = "Stampa";
+    private static String CERCA_MARCE_TEXT = "Cerca";
 
     public MarcePrimaryStage() {
         GridPane root = new GridPane();
@@ -67,17 +78,10 @@ public class MarcePrimaryStage extends Stage {
         marceTableView.setPrefHeight(700);
         vbox.getChildren().addAll(marceTableView);
         root.add(vbox, 0, 2);
+        currentlyOpenedFileView = new CurrentlyOpenedFileView();
+        root.add(currentlyOpenedFileView, 0, 3);
 
-        GridPane bottomPane = new GridPane();
-        bottomPane.setMaxHeight(90);
-        bottomPane.setPadding(new Insets(0, 10, 10, 10));
-        Label marceFileLabel = new Label("File in uso: ");
-        bottomPane.add(marceFileLabel, 0, 0);
-        marceFilePathLabel = new Label("Nessun file");
-        bottomPane.add(marceFilePathLabel, 1, 0);
-        root.add(bottomPane, 0, 3);
-
-        setTitle("Gestione Marce");
+        setTitle(MAIN_WINDOW_TITLE_TEXT);
         setScene(scene);
     }
 
@@ -87,7 +91,7 @@ public class MarcePrimaryStage extends Stage {
 
     private void setMarceFile(File marceFile) {
         this.marceFile = marceFile;
-        marceFilePathLabel.setText(this.marceFile == null? "No file" : this.marceFile.getAbsolutePath());
+        currentlyOpenedFileView.updateFilePathLabel(this.marceFile.getAbsolutePath());
     }
 
     public void onMarciaCreated(Marcia marcia) {
@@ -108,27 +112,27 @@ public class MarcePrimaryStage extends Stage {
 
     private ToolBar buildToolBar() {
         ToolBar toolBar = new ToolBar();
-        Button buttonNew = new Button("Nuovo", new ImageView(new Image("icons/document_32.png")));
+        Button buttonNew = new Button(NUOVA_MARCIA_TEXT, new ImageView(new Image("icons/document_32.png")));
         buttonNew.setContentDisplay(ContentDisplay.TOP);
         buttonNew.setOnAction(new NewAction());
 
-        Button buttonOpen = new Button("Apri", new ImageView(new Image("icons/folder_32.png")));
+        Button buttonOpen = new Button(APRI_FILE_TEXT, new ImageView(new Image("icons/folder_32.png")));
         buttonOpen.setContentDisplay(ContentDisplay.TOP);
         buttonOpen.setOnAction(new OpenAction());
 
-        Button buttonSave = new Button("Salva", new ImageView(new Image("icons/save_32.png")));
+        Button buttonSave = new Button(SALVA_FILE_TEXT, new ImageView(new Image("icons/save_32.png")));
         buttonSave.setContentDisplay(ContentDisplay.TOP);
         buttonSave.setOnAction(new SaveAction());
 
-        Button buttonSaveNew = new Button("Salva Con Nome", new ImageView(new Image("icons/save_32.png")));
+        Button buttonSaveNew = new Button(SALVA_FILE_CON_NOME_TEXT, new ImageView(new Image("icons/save_32.png")));
         buttonSaveNew.setContentDisplay(ContentDisplay.TOP);
         buttonSaveNew.setOnAction(new SaveWithNameAction());
 
-        Button buttonPrint = new Button("Stampa", new ImageView(new Image("icons/print_32.png")));
+        Button buttonPrint = new Button(STAMPA_MARCE_TEXT, new ImageView(new Image("icons/print_32.png")));
         buttonPrint.setContentDisplay(ContentDisplay.TOP);
         buttonPrint.setOnAction(new PrintAction());
 
-        Button buttonSearch = new Button("Cerca", new ImageView(new Image("icons/search_32.png")));
+        Button buttonSearch = new Button(CERCA_MARCE_TEXT, new ImageView(new Image("icons/search_32.png")));
         buttonSearch.setContentDisplay(ContentDisplay.TOP);
         buttonSearch.setOnAction(new SearchAction());
 
@@ -138,29 +142,29 @@ public class MarcePrimaryStage extends Stage {
 
     private MenuBar buildMenuBar() {
         MenuBar menuBar = new MenuBar();
-        Menu menuFile = new Menu("File");
+        Menu menuFile = new Menu(FILE_MENU_TEXT);
 
-        MenuItem newItem = new MenuItem("Nuovo");
+        MenuItem newItem = new MenuItem(NUOVA_MARCIA_TEXT);
         newItem.setOnAction(new NewAction());
 
-        MenuItem openItem = new MenuItem("Apri");
+        MenuItem openItem = new MenuItem(APRI_FILE_TEXT);
         openItem.setOnAction(new OpenAction());
 
-        MenuItem saveItem = new MenuItem("Salva");
+        MenuItem saveItem = new MenuItem(SALVA_FILE_TEXT);
         saveItem.setOnAction(new SaveWithNameAction());
 
-        MenuItem saveNewItem = new MenuItem("Salva Con Nome");
+        MenuItem saveNewItem = new MenuItem(SALVA_FILE_CON_NOME_TEXT);
         saveNewItem.setOnAction(new SaveAction());
 
-        MenuItem printItem = new MenuItem("Stampa");
+        MenuItem printItem = new MenuItem(STAMPA_MARCE_TEXT);
         printItem.setOnAction(new PrintAction());
 
-        MenuItem searchItem = new MenuItem("Cerca");
+        MenuItem searchItem = new MenuItem(CERCA_MARCE_TEXT);
         searchItem.setOnAction(new SearchAction());
 
         menuFile.getItems().addAll(newItem, openItem, saveItem, saveNewItem, printItem, searchItem);
 
-        Menu menuHelp = new Menu("Aiuto");
+        Menu menuHelp = new Menu(AIUTO_MENU_TEXT);
         menuBar.getMenus().addAll(menuFile, menuHelp);
         return menuBar;
     }

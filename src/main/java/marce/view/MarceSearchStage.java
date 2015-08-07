@@ -111,9 +111,9 @@ public class MarceSearchStage extends Stage {
                 while (filteredMarceIterator.hasNext()) {
                     filteredMarce.add(filteredMarceIterator.next());
                 }
-                kmTotali.setText(MarceManager.TotaleKm(filteredMarce) + "");
+                kmTotali.setText(MarceManager.totaleKm(filteredMarce) + "");
                 try {
-                    tempoTotale.setText(MarceManager.TotaleTempo(filteredMarce).toString());
+                    tempoTotale.setText(MarceManager.totaleTempo(filteredMarce).toString());
                 } catch (ParsingException e) {
                     tempoTotale.setText("??");
                     e.printStackTrace();
