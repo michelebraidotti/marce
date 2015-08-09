@@ -57,23 +57,19 @@ public class MarceSearchStage extends Stage {
         root.setVgap(10);
         root.getColumnConstraints().addAll(column);
 
-        Scene scene = new Scene(root, 1200, 800);
-
         int rowNumber = 0;
         Text sceneTitle = new Text("Cerca marce");
         sceneTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         VBox titleBox = new VBox();
         titleBox.setPadding(new Insets(10, 10, 10, 10));
         titleBox.getChildren().addAll(sceneTitle);
-        root.add(titleBox, 0, rowNumber);
+        root.add(titleBox, 0, rowNumber++);
 
-        rowNumber++;
         TabPane tabPane = new TabPane();
         tabPane.setMinHeight(90);
         tabPane.getTabs().addAll(buildCercaPerAnnoTab(), buildCercaPerPostoTab(), buildCercaPerMarciaTab(), buildCercaPerKmTab());
-        root.add(tabPane, 0, rowNumber);
+        root.add(tabPane, 0, rowNumber++);
 
-        rowNumber++;
         marceList = FXCollections.observableArrayList();
         marceList.addAll(marceManager.getMarce());
         filteredMarceList = new FilteredList<Marcia>(marceList, p -> true);
@@ -83,9 +79,8 @@ public class MarceSearchStage extends Stage {
         vbox.setPadding(new Insets(10, 10, 10, 10));
         marceTableView.setPrefHeight(800);
         vbox.getChildren().addAll(marceTableView);
-        root.add(vbox, 0, rowNumber);
+        root.add(vbox, 0, rowNumber++);
 
-        rowNumber++;
         GridPane bottomPane = new GridPane();
         bottomPane.setMaxHeight(90);
         bottomPane.setPadding(new Insets(0, 10, 10, 10));
@@ -97,10 +92,10 @@ public class MarceSearchStage extends Stage {
         bottomPane.add(tempoTotaleLabel, 2, 0);
         tempoTotale = new Label("0:0:0");
         bottomPane.add(tempoTotale, 3, 0);
-        root.add(bottomPane, 0, rowNumber);
+        root.add(bottomPane, 0, rowNumber++);
 
         setTitle("Cerca Marce");
-        setScene(scene);
+        setScene(new Scene(root, 1200, 800));
 
         filteredMarceList.addListener(new ListChangeListener<Marcia>(){
 

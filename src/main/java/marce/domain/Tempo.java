@@ -1,5 +1,7 @@
 package marce.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author michele
@@ -36,12 +38,27 @@ public class Tempo {
         }
     }
 
+    public Integer getOre() {
+        return this.value/3600;
+    }
+
+    public Integer getMinuti() {
+        return (this.value%3600)/60;
+    }
+
+    public Integer getSecondi() {
+        return (this.value%3600)%60;
+    }
+
+    private String[] splitTempo() {
+        return StringUtils.split(this.toString(), ":");
+    }
+
     @Override
     public String toString() {
-        int hours = this.value/3600;
-        int remainMin = this.value%3600;
-        int min = remainMin/60;
-        int sec = remainMin%60;
+        int hours = getOre();
+        int min = getMinuti();
+        int sec = getSecondi();
         String hourStr = hours + "";
         if ( hours < 10 ) hourStr = "0" + hourStr;
         String minStr = min + "";

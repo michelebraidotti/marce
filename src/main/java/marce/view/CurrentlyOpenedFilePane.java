@@ -7,10 +7,10 @@ import javafx.scene.layout.GridPane;
 /**
  * Created by michele on 8/7/15.
  */
-public class CurrentlyOpenedFileView extends GridPane {
+public class CurrentlyOpenedFilePane extends GridPane {
     private final Label marceFilePathLabel;
 
-    public CurrentlyOpenedFileView() {
+    public CurrentlyOpenedFilePane() {
         GridPane bottomPane = new GridPane();
         bottomPane.setMaxHeight(90);
         bottomPane.setPadding(new Insets(0, 10, 10, 10));

@@ -23,7 +23,6 @@ import marce.domain.ParsingException;
 import marce.logic.InvalidIdException;
 import marce.logic.MarceFile;
 import marce.logic.MarceManager;
-import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class MarcePrimaryStage extends Stage {
     private MarceManager marceManager = new MarceManager();
     private ObservableList<Marcia> marceList;
     private File marceFile;
-    private CurrentlyOpenedFileView currentlyOpenedFileView;
+    private CurrentlyOpenedFilePane currentlyOpenedFilePane;
 
 
     private static String MAIN_WINDOW_TITLE_TEXT = "Gestione Marce";
@@ -54,37 +53,37 @@ public class MarcePrimaryStage extends Stage {
     private static String CERCA_MARCE_TEXT = "Cerca";
 
     public MarcePrimaryStage() {
+        // main pane
         GridPane root = new GridPane();
         ColumnConstraints column = new ColumnConstraints();
         column.setPercentWidth(100);
         root.getColumnConstraints().addAll(column);
-
-        Scene scene = new Scene(root, 1200, 800);
+        int rowNumber = 0;
 
         // menu bar
-        root.add(buildMenuBar(), 0, 0);
+        root.add(buildMenuBar(), 0, rowNumber++);
 
         //button bar
-        root.add(buildToolBar(), 0, 1);
+        root.add(buildToolBar(), 0, rowNumber++);
 
         // main marceTableView
         marceTableView = new MarceTableView();
         marceTableView.setEditable(true);
-
         marceList = FXCollections.observableArrayList();
         marceTableView.setItems(marceList);
-
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 10, 10, 10));
         marceTableView.setPrefHeight(700);
         vbox.getChildren().addAll(marceTableView);
-        root.add(vbox, 0, 2);
-        currentlyOpenedFileView = new CurrentlyOpenedFileView();
-        root.add(currentlyOpenedFileView, 0, 3);
+        root.add(vbox, 0, rowNumber++);
+
+        // bottom pane indicating the currently opened file
+        currentlyOpenedFilePane = new CurrentlyOpenedFilePane();
+        root.add(currentlyOpenedFilePane, 0, rowNumber++);
 
         setTitle(MAIN_WINDOW_TITLE_TEXT);
-        setScene(scene);
+        setScene(new Scene(root, 1200, 800));
     }
 
     private File getMarceFile() {
@@ -93,7 +92,7 @@ public class MarcePrimaryStage extends Stage {
 
     private void setMarceFile(File marceFile) {
         this.marceFile = marceFile;
-        currentlyOpenedFileView.updateFilePathLabel(this.marceFile.getAbsolutePath());
+        currentlyOpenedFilePane.updateFilePathLabel(this.marceFile.getAbsolutePath());
     }
 
     public void onMarciaCreated(Marcia marcia) {
@@ -142,7 +141,7 @@ public class MarcePrimaryStage extends Stage {
         buttonSearch.setContentDisplay(ContentDisplay.TOP);
         buttonSearch.setOnAction(new SearchAction());
 
-        toolBar.getItems().addAll(buttonNew, buttonEdit, buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch);
+        toolBar.getItems().addAll(buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch, buttonNew, buttonEdit);
         return toolBar;
     }
 
@@ -168,7 +167,7 @@ public class MarcePrimaryStage extends Stage {
         MenuItem searchItem = new MenuItem(CERCA_MARCE_TEXT);
         searchItem.setOnAction(new SearchAction());
 
-        menuFile.getItems().addAll(newItem, openItem, saveItem, saveNewItem, printItem, searchItem);
+        menuFile.getItems().addAll(openItem, saveItem, saveNewItem, printItem, searchItem);
 
         Menu menuHelp = new Menu(AIUTO_MENU_TEXT);
         menuBar.getMenus().addAll(menuFile, menuHelp);

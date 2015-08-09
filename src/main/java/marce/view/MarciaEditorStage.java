@@ -39,6 +39,7 @@ public class MarciaEditorStage extends Stage {
     private final TextField minuti;
     private final TextField secondi;
     private final PostoEditorStage postoEditorStage;
+    private final Label progressivoLabelValue;
 
     private Marcia marcia;
 
@@ -67,7 +68,7 @@ public class MarciaEditorStage extends Stage {
         rowNumber++;
         Label progressivoLabel = new Label("Progressivo:");
         grid.add(progressivoLabel, 0, rowNumber);
-        Label progressivoLabelValue = new Label("--");
+        progressivoLabelValue = new Label("--");
         grid.add(progressivoLabelValue, 1, rowNumber);
 
 
@@ -203,9 +204,34 @@ public class MarciaEditorStage extends Stage {
         buttonsGrid.add(cancelBtn, 1, 1);
         grid.add(buttonsGrid, 0, rowNumber, 4, 1);
 
+        setFields();
+
         Scene scene = new Scene(grid, 850, 350);
         this.setTitle("Marcia");
         this.setScene(scene);
+    }
+
+    private void setFields() {
+        if (marcia != null) {
+            progressivoLabelValue.setText(marcia.getId().toString());
+            nomeMarciaComboBox.getSelectionModel().select(marcia.getNomeEvento());
+            edizione.setText(marcia.getEdizione().toString());
+            dataInizio.setValue(marcia.getDataInizio().getLocalDate());
+            dataFine.setValue(marcia.getDataInizio().getLocalDate());
+            postoComboBox.getSelectionModel().select(marcia.getPosto());
+            int kmParsed = Integer.parseInt(marcia.getKm().toPlainString().split("\\.")[0]);
+            km.setText(kmParsed + "");
+            if ( marcia.getKm().toPlainString().contains(".")) {
+                int mtParsed = Integer.parseInt(marcia.getKm().toPlainString().split("\\.")[1]);
+                metri.setText(mtParsed + "");
+            }
+            else {
+                metri.setText("0");
+            }
+            ore.setText(marcia.getTempo().getOre().toString());
+            minuti.setText(marcia.getTempo().getMinuti().toString());
+            secondi.setText(marcia.getTempo().getSecondi().toString());
+        }
     }
 
     public Marcia getMarcia() throws Exception {
