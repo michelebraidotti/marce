@@ -44,7 +44,9 @@ public class MarcePrimaryStage extends Stage {
     private static String MAIN_WINDOW_TITLE_TEXT = "Gestione Marce";
     private static String FILE_MENU_TEXT = "FIle";
     private static String AIUTO_MENU_TEXT = "Aiuto";
+
     private static String NUOVA_MARCIA_TEXT = "Nuova Marcia";
+    private static String EDIT_MARCIA_TEXT = "Modifica Marcia";
     private static String APRI_FILE_TEXT = "Apri";
     private static String SALVA_FILE_TEXT = "Salva";
     private static String SALVA_FILE_CON_NOME_TEXT = "Salva Con Nome";
@@ -116,6 +118,10 @@ public class MarcePrimaryStage extends Stage {
         buttonNew.setContentDisplay(ContentDisplay.TOP);
         buttonNew.setOnAction(new NewAction());
 
+        Button buttonEdit = new Button(EDIT_MARCIA_TEXT, new ImageView(new Image("icons/document_32.png")));
+        buttonEdit.setContentDisplay(ContentDisplay.TOP);
+        buttonEdit.setOnAction(new EditAction());
+
         Button buttonOpen = new Button(APRI_FILE_TEXT, new ImageView(new Image("icons/folder_32.png")));
         buttonOpen.setContentDisplay(ContentDisplay.TOP);
         buttonOpen.setOnAction(new OpenAction());
@@ -136,7 +142,7 @@ public class MarcePrimaryStage extends Stage {
         buttonSearch.setContentDisplay(ContentDisplay.TOP);
         buttonSearch.setOnAction(new SearchAction());
 
-        toolBar.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch);
+        toolBar.getItems().addAll(buttonNew, buttonEdit, buttonOpen, buttonSave, buttonSaveNew, buttonPrint, buttonSearch);
         return toolBar;
     }
 
@@ -177,6 +183,17 @@ public class MarcePrimaryStage extends Stage {
             newMarciaStage.show();
         }
     }
+
+    private class EditAction implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            Marcia selectedMarcia = marceManager.get(marceTableView.getSelectionModel().getSelectedIndex());
+            MarciaEditorStage newMarciaStage = new MarciaEditorStage(MarcePrimaryStage.this, selectedMarcia, marceManager.getDenominazioniList(), marceManager.getPostiList());
+            newMarciaStage.show();
+        }
+    }
+
 
     private class OpenAction implements EventHandler<ActionEvent> {
 
