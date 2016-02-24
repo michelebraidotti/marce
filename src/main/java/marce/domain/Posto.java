@@ -5,8 +5,8 @@ package marce.domain;
  * @author michele
  */
 public class Posto implements Comparable {
-    private String localita;
-    private String zona;
+    private String localita = "??";
+    private String zona = "??";
     public final static String SEPARATOR = ", ";
 
     public Posto() {

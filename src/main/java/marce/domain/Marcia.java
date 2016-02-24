@@ -6,11 +6,11 @@ public class Marcia {
 //   public static Object[] HEADER = {"Progressivo", "Data", "Giorni", "Edizione", "Denominazione",
 //	"Localita'", "Zona", "Km", "Tempo"};
     private Integer id = 0;
-    private DataDelCalendario dataInizio;
-    private DataDelCalendario dataFine;
-    private String nomeEvento;
+    private DataDelCalendario dataInizio = new DataDelCalendario();
+    private DataDelCalendario dataFine = new DataDelCalendario();
+    private String nomeEvento = "";
     private Integer edizione = 0;
-    private Posto posto;
+    private Posto posto = new Posto();
     private BigDecimal km = new BigDecimal("0.000");
     private Tempo tempo = new Tempo(0);
 

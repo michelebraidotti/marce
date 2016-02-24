@@ -1,0 +1,3 @@
+# maven command to build "executable" single jar
+mvn clean compile assembly:single
+

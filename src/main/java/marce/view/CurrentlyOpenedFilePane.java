@@ -11,13 +11,13 @@ public class CurrentlyOpenedFilePane extends GridPane {
     private final Label marceFilePathLabel;
 
     public CurrentlyOpenedFilePane() {
-        GridPane bottomPane = new GridPane();
-        bottomPane.setMaxHeight(90);
-        bottomPane.setPadding(new Insets(0, 10, 10, 10));
+        super();
+        setMaxHeight(90);
+        setPadding(new Insets(0, 10, 10, 10));
         Label marceFileLabel = new Label("File in uso: ");
-        bottomPane.add(marceFileLabel, 0, 0);
+        add(marceFileLabel, 0, 0);
         marceFilePathLabel = new Label("Nessun file");
-        bottomPane.add(marceFilePathLabel, 1, 0);
+        add(marceFilePathLabel, 1, 0);
     }
 
     public void updateFilePathLabel(String filePathLabel) {
